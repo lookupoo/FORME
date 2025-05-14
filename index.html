@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>فرم درخواست وام دیجیتالی</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      direction: rtl;
+    }
+
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 400px;
+      margin: auto;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    #fingerprint {
+      display: block;
+      width: 80px;
+      height: 80px;
+      margin: 10px auto;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    #fingerprint:hover {
+      transform: scale(1.05);
+    }
+
+    button {
+      width: 100%;
+      background-color: #4caf50;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="loanForm">
+    <label>نام وام‌دهنده</label>
+    <input type="text" name="lender" required>
+
+    <label>نام وام‌گیرنده</label>
+    <input type="text" name="borrower" required>
+
+    <label>مقدار وام (واحد دیجیتالی)</label>
+    <input type="number" name="amount" required>
+
+    <label>تاریخ ثبت</label>
+    <input type="date" name="start_date" required>
+
+    <label>تاریخ سررسید</label>
+    <input type="date" name="due_date" required>
+
+    <label>وثیقه</label>
+    <input type="text" name="guarantee">
+
+    <label>تعهدنامه</label>
+    <textarea name="commitment" rows="2">متعهد می‌شوم در تاریخ مقرر، وام را بازپرداخت نمایم.</textarea>
+
+    <label>تأیید با اثر انگشت</label>
+    <img src="https://cdn.imgurl.ir/uploads/o484102_RED.png" id="fingerprint" alt="اثر انگشت" />
+
+    <button type="submit">ثبت و ذخیره موقت</button>
+  </form>
+
+  <audio id="success-sound" src="https://cdn.imgurl.ir/uploads/u12651_ping-82822.mp3" preload="auto"></audio>
+
+  <script>
+    const form = document.getElementById('loanForm');
+    const fingerprint = document.getElementById('fingerprint');
+    const sound = document.getElementById('success-sound');
+    let confirmed = false;
+
+    fingerprint.addEventListener('click', () => {
+      confirmed = !confirmed;
+      fingerprint.src = confirmed
+        ? "https://cdn.imgurl.ir/uploads/b54078_GREEN.png"
+        : "https://cdn.imgurl.ir/uploads/o484102_RED.png";
+
+      if (confirmed) {
+        sound.currentTime = 0;
+        sound.play();
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      if (!confirmed) {
+        alert("لطفاً ابتدا اثر انگشت را تأیید کنید.");
+        return;
+      }
+
+      const data = new FormData(form);
+      const loanData = {};
+      data.forEach((value, key) => loanData[key] = value);
+
+      localStorage.setItem('loanDraft', JSON.stringify(loanData));
+      alert("اطلاعات به‌صورت موقت ذخیره شد.");
+      form.reset();
+      confirmed = false;
+      fingerprint.src = "https://cdn.imgurl.ir/uploads/o484102_RED.png";
+    });
+  </script>
+</body>
+</html>
